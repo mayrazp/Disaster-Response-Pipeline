@@ -1,12 +1,12 @@
 # Data Engineering
-**Disaster-Response-Pipeline**
+# Project: Disaster-Response-Pipeline
 1. Project Overview
 This project consists in build a web application where will execute two specific task:  A ETL process and build a machine learning Pipeline. As output the web application will display visualizations of the data.
 
 2. Description Project
 There are three main folders:
 
-*data
+2.1 data
 The data folder contains the following files:
  * disaster_categories.csv: dataset with all the categories
  * disaster_messages.csv: dataset with all the messages
@@ -14,12 +14,12 @@ The data folder contains the following files:
  
 * DisasterResponse.db: output of the ETL pipeline.
 
-*models
+2.2 models
 The models folder contains the following files:
  * train_classifier.py: machine learning pipeline scripts to build, evaluate and export a classifier
  * classifier.pkl: output of the machine learning pipeline.
  
-*app
+2.3 app
 The app folder contains the following files:
  * run.py: Flask file to run the web application
  * templates: html file for the web applicatin
