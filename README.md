@@ -5,7 +5,8 @@ This project consists in build a web application where will execute two specific
 
 2. Description Project
 There are three main folders:
-  2.1 data
+
+<pre><code> 2.1 data
   The data folder contains the following files:
  * disaster_categories.csv: dataset with all the categories
  * disaster_messages.csv: dataset with all the messages
@@ -22,6 +23,7 @@ The models folder contains the following files:
 The app folder contains the following files:
  * run.py: Flask file to run the web application
  * templates: html file for the web applicatin
+ </code></pre>
 
 3 Runing
 Run the following commands in the project's root directory to set up your database and model.
