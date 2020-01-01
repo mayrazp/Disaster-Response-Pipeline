@@ -10,12 +10,15 @@ from sklearn.tree import DecisionTreeClassifier
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-nltk.download(['punkt', 'wordnet', 'stopwords'])
+from sklearn.pipeline import FeatureUnion
 import pickle
 import re
 import sys
 import warnings
 import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 import numpy as np
 import pandas as pd
 
@@ -24,11 +27,18 @@ from sqlalchemy import create_engine
 
 def load_data(database_filepath):
     '''
+    The code below load data from database as dataframe
+    Input paramaters:
+        database_filepath: File path of sql database
+    Output:
+        X: Message data
+        Y: Categories (target)
+        category_names: Labels for categories
     
     '''
-    # load data from database
     engine = create_engine('sqlite:///' + database_filepath)
-    df = pd.read_sql_table(table_name='disasterResponseTable', con=engine)
+    df = pd.read_sql_table(table_name='cleanDisasterResponse', con=engine)
+    print(df)
 
     category_name = df.columns[4:]
 
@@ -40,25 +50,30 @@ def load_data(database_filepath):
 
 def tokenize(text):
     '''
-    The code above detect urls then normalize and tokenize the text, removing stop words and apply a lemmatize process.
+    The code below tokenize the text removing stop words and applying a lemmatize process.
+    Input paramaters:
+        text: original message text
+    Output paramters:
+        a clean text
     '''
-    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    tokens = word_tokenize(text)
+    words = [w for w in tokens if w not in stopwords.words("english")]
+    lemmatizer = WordNetLemmatizer()
+    clean_tokens = []
+    for word in words:
+        clean_word = lemmatizer.lemmatize(word).strip()
+        clean_tokens.append(clean_word)
 
-    detected_urls = re.findall(url_regex, text)
-    for url in detected_urls:
-        text = text.replace(url, 'urlplaceholder')
-
-    tokens = nltk.word_tokenize(re.sub(r"[^a-zA-Z0-9]", " ", text.lower()))
-    tokens = [word for word in tokens if word not in stopwords.words('english')]
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    return tokens
-
+    return clean_tokens
 
 def build_model():
     '''
+    The code below build a machine learning pipeline using tfidf, AdaBoostClassifier and execute a gridsearch to find the best parameters for the model.
+    Input paramaters: None
+    Output paramaters: Results of GridSearchCV
     
     '''
-    # Set pipeline
     pipeline = Pipeline([
         ('features', FeatureUnion([
             ('text_pipeline', Pipeline([
@@ -76,26 +91,27 @@ def build_model():
         ))
     ])
    
-    # Set parameters for gird search
     parameters = {
         'clf__estimator__learning_rate': [0.1, 0.35],
         'clf__estimator__n_estimators': [150, 250]
     }
 
-    # Set grid search
-    cv = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=5, scoring='f1_weighted', verbose=5)
-
+    cv = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=2, scoring='f1_weighted', verbose=2)
     return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_name):
     '''
-    Was evaluated the model performance using accuracy, precision, recall and f1-score
+    The code below evaluate the model performance using accuracy, precision, recall and f1-score metrics
+    Input paramaters: 
+        model: the machine learning model.
+        X_test: prediction of test data
+        Y_test: true lables for test data
+        category_name: Labels for cartegories.
+    Output parameters:
+        None
     '''
-    # Predict categories of messages.
     Y_pred = model.predict(X_test)
-
-    # Print accuracy, precision, recall and f1_score for each categories
     for i in range(0, len(category_name)):
         print(category_name[i])
         print("\tAccuracy: {:.3f}\t\t% Precision: {:.3f}\t\t% Recall: {:.3f}\t\t% F1_score: {:.3f}".format(
@@ -109,9 +125,11 @@ def evaluate_model(model, X_test, Y_test, category_name):
 def save_model(model, model_filepath):
     '''
     Save the model to a specified path
-    Parameters
-    model: A Machine learning model
-    model_filepath: path where the model will be saved
+    Input parameters:
+        model: A Machine learning model
+        model_filepath: path where the model will be saved
+    Output paramters:
+         A pickle file of the model
     
     '''
     with open(model_filepath, 'wb') as file:
