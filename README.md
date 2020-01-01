@@ -5,9 +5,8 @@ This project consists in build a web application where will execute two specific
 
 2. Description Project
 There are three main folders:
-
-2.1 data
-The data folder contains the following files:
+  2.1 data
+  The data folder contains the following files:
  * disaster_categories.csv: dataset with all the categories
  * disaster_messages.csv: dataset with all the messages
  *process_data.py: ETL pipeline scripts to read csv format, clean the text, and save the data into a SQLite database.
