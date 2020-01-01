@@ -10,9 +10,8 @@ There are three main folders:
   The data folder contains the following files:
  * disaster_categories.csv: dataset with all the categories
  * disaster_messages.csv: dataset with all the messages
- *process_data.py: ETL pipeline scripts to read csv format, clean the text, and save the data into a SQLite database.
- 
-* DisasterResponse.db: output of the ETL pipeline.
+ * process_data.py: ETL pipeline scripts to read csv format, clean the text, and save the data into a SQLite database.
+ * DisasterResponse.db: output of the ETL pipeline.
 
 2.2 models
 The models folder contains the following files:
@@ -25,7 +24,7 @@ The app folder contains the following files:
  * templates: html file for the web applicatin
  </code></pre>
 
-3 Runing
+3. Runing
 Run the following commands in the project's root directory to set up your database and model.
 
 To run ETL pipeline that cleans data and stores in database python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
@@ -42,6 +41,10 @@ Go to http://0.0.0.0:3001/
 * pandas
 * scikit-learn
 * sqlalchemy 
+
+5. Acknowledgements
+
+I wish to thank Figure Eight for dataset.
 
 
 
