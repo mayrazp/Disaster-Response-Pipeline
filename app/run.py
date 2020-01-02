@@ -47,6 +47,9 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    category_counts = df.iloc[:,4:].sum(axis = 0).sort_values(ascending = False)
+    category_top10 = category_counts.head(10)
+    category_names = list(category_top10.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -68,6 +71,24 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_top10
+                )
+            ],
+
+            'layout': {
+                'title': 'The Top 10 Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
         }
     ]
     
@@ -84,6 +105,7 @@ def index():
 def go():
     # save user input in query
     query = request.args.get('query', '') 
+    print(query)
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
